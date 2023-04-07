@@ -1,10 +1,8 @@
-/* Сортировка таблицы слева */
 table1.onclick = function (e) {
   if (e.target.tagName != 'TH') return;
   let th = e.target;
   sortTable(th.cellIndex, th.dataset.type, 'table1');
 };
-/* Сортировка таблицы справа */
 table2.onclick = function (e) {
   if (e.target.tagName != 'TH') return;
   let th = e.target;
@@ -31,25 +29,19 @@ function sortTable(colNum, type, id) {
   rowsArray.sort(compare);
   tbody.append(...rowsArray);
 }
-
-/* Поиск товаров */
 var options = {
   valueNames: [ 'name', 'price' ]
 };
 var userList
 
-/* Добавить новый товар */
-// Модальное окно
 var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
   keyboard: false
 })
 
-// Добавить счетчик числа товаров в локальное хранилище
 if(!localStorage.getItem('goods')) {
   localStorage.setItem('goods', JSON.stringify([]))
 }
 
-// Сохранение нового товара
 document.querySelector('button.add_new').addEventListener('click', function(e) {
   let name = document.getElementById('good_name').value
   let price = document.getElementById('good_price').value
@@ -72,7 +64,6 @@ document.querySelector('button.add_new').addEventListener('click', function(e) {
   }
 })
 
-// Обновление отображаемых товаров
 update_goods()
 
 function update_goods() {
@@ -97,9 +88,7 @@ function update_goods() {
       </tr>
       `)
       if(goods[i][4]>0) {
-        // Расчитать цену с учетом скидки
         goods[i][6] = goods[i][4]*goods[i][2] - goods[i][4]*goods[i][2]*goods[i][5]*0.01
-        // Сумировать цену в общий результат
         result_price += goods[i][6]
         document.querySelector('.cart').insertAdjacentHTML('beforeend',
         `
@@ -120,12 +109,9 @@ function update_goods() {
     table1.hidden = true
     table2.hidden = true
   }
-  //console.log(result_price)
-  // Вывести цену в итог
   document.querySelector('.price_result').innerHTML = result_price + ' &#8381;'
 }
 
-/* Удаление отдельных товаров */
 document.querySelector('.list').addEventListener('click', function(e) {  
   if(!e.target.dataset.delete) {
     return
@@ -144,7 +130,7 @@ document.querySelector('.list').addEventListener('click', function(e) {
       let goods = JSON.parse(localStorage.getItem('goods'))
       for(let i=0; i<goods.length; i++) {
         if(goods[i][0] == e.target.dataset.delete) {
-          goods.splice(i,1) // удалить товар
+          goods.splice(i,1)
           localStorage.setItem('goods', JSON.stringify(goods))
           update_goods()
         }
@@ -158,7 +144,6 @@ document.querySelector('.list').addEventListener('click', function(e) {
   })
 })
 
-/* Добавление в корзину */
 document.querySelector('.list').addEventListener('click', function(e) {  
   if(!e.target.dataset.goods) {
     return
@@ -173,7 +158,6 @@ document.querySelector('.list').addEventListener('click', function(e) {
     }
   }
 })
-/* Удаление одного товара из корзины */
 document.querySelector('.cart').addEventListener('click', function(e) {  
   if(!e.target.dataset.delete) {
     return
@@ -188,7 +172,6 @@ document.querySelector('.cart').addEventListener('click', function(e) {
     }
   }
 })
-/* Изменение скидки */
 document.querySelector('.cart').addEventListener('input', function(e) {  
   if(!e.target.dataset.goodid) {
     return
@@ -196,13 +179,10 @@ document.querySelector('.cart').addEventListener('input', function(e) {
   let goods = JSON.parse(localStorage.getItem('goods'))
   for(let i=0; i<goods.length; i++) {
     if(goods[i][0] == e.target.dataset.goodid) {
-      // Скидка
       goods[i][5] = e.target.value
-      // Цена со скидкой
       goods[i][6] = goods[i][4]*goods[i][2] - goods[i][4]*goods[i][2]*goods[i][5]*0.01
       localStorage.setItem('goods', JSON.stringify(goods))
       update_goods()
-      // Поставить фокус в поле скидки и передвинуть курсор в конец
       let input = document.querySelector(`[data-goodid="${goods[i][0]}"]`)
       input.focus()
       input.selectionStart = input.value.length;
